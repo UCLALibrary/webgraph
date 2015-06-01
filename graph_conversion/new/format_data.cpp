@@ -1,0 +1,44 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <math.h> 
+using namespace std;
+
+int main()
+{
+  ofstream currWrite;
+  string index_base="/home/ubuntu/data/index/index-";
+  const unsigned numIndexFiles=83;
+  unsigned currIndexFile=0;
+  while(currIndexFile<numIndexFiles)
+    {
+      int zeronum=0;
+      if(currIndexFile!=0)
+	zeronum=log10(currIndexFile)+1;
+      zeronum=5-zeronum;
+      if(currIndexFile==0)
+	zeronum--;
+      string currReadName=index_base+string(zeronum, '0').append(to_string(currIndexFile));
+      string currWriteName="final_index/final-"+string(zeronum, '0').append(to_string(currIndexFile));
+
+      ifstream currRead (currReadName);
+      currWrite.open(currWriteName);
+      string line;
+      if(currRead.is_open())
+	{
+	  while( getline(currRead, line))
+	    {
+	      string newline=line.substr(0, line.find("\t")).substr(7);
+	      newline=newline.substr(0, newline.length()-1);
+	      if(newline.find("/")==string::npos)
+		currWrite << line << endl;
+	    }
+	  currRead.close();
+	}
+      else
+	cout << "Unable to open file: " << currReadName << endl;
+      currWrite.close();
+      cout << "Index File Finished: " << currWriteName <<endl;
+      currIndexFile++;
+    }
+}
